@@ -60,16 +60,22 @@
         self.maxValue = config.maxValue;
     }
     if (config.defaultLeftValue<=config.defaultRightValue&&config.defaultLeftValue>=0&&config.defaultRightValue>=0) {
-        self.leftButton.centerX = (config.defaultLeftValue-config.minValue)/(config.maxValue-config.minValue)*self.backgroundLine.width;
-        self.leftLine.width = self.leftButton.centerX;
-        self.rightButton.centerX = (config.defaultRightValue-config.minValue)/(config.maxValue-config.minValue)*self.backgroundLine.width;
-        self.rightLine.x = self.rightButton.centerX;
-        self.rightLine.width = self.width-self.rightButton.centerX;
-        self.currentLeftValue = config.defaultLeftValue;
-        self.currentRightValue = config.defaultRightValue;
+        [self setFrameWithLeftValue:config.defaultLeftValue];
+        [self setFrameWithRightValue:config.defaultRightValue];
     }
 }
-
+//MARK: - 根据value重置滑块位置和值
+-(void)setFrameWithLeftValue:(CGFloat)value{
+    self.leftButton.centerX = (value-self.minValue)/(self.maxValue-self.minValue)*self.backgroundLine.width;
+    self.leftLine.width = self.leftButton.centerX;
+    self.currentLeftValue = value;
+}
+-(void)setFrameWithRightValue:(CGFloat)value{
+    self.rightButton.centerX = (value-self.minValue)/(self.maxValue-self.minValue)*self.backgroundLine.width;
+    self.rightLine.x = self.rightButton.centerX;
+    self.rightLine.width = self.width-self.rightButton.centerX;
+    self.currentRightValue = value;
+}
 
 //MARK: - 拖左边的按钮
 -(void)panleftSliderBtn:(UIPanGestureRecognizer *)pan
@@ -102,7 +108,7 @@
             self.rightLine.width = 0;
             self.rightButton.centerX = self.width ;
         }
-        [self rightValueChange:self.rightButton.centerX];
+        
     }else{
         if (self.leftButton.centerX < 0) {
             self.leftButton.centerX = 0;
@@ -114,10 +120,10 @@
         self.rightButton.centerX = rightCenter.x;
         self.rightLine.x = rightCenter.x;
         self.rightLine.width = self.width - self.rightLine.x;
-
-        [self leftValueChange:self.leftButton.centerX];
     }
     self.leftLine.width = self.leftButton.centerX;
+    [self rightValueChange:self.rightButton.centerX];
+    [self leftValueChange:self.leftButton.centerX];
     
 }
 //MARK: - 拖右边的按钮
@@ -150,7 +156,7 @@
             self.leftLine.width = 0;
             self.leftButton.centerX = 0;
         }
-        [self leftValueChange:self.leftButton.centerX];
+        
         
     }else{
         if (self.rightButton.centerX < 0) {
@@ -162,10 +168,12 @@
         //将左边的重置回原来的位置
         self.leftButton.centerX = leftCenter.x;
         self.leftLine.width = leftCenter.x;
-        [self rightValueChange:self.rightButton.centerX];
+        
     }
     self.rightLine.x = self.rightButton.centerX;
     self.rightLine.width = self.width-self.rightButton.centerX;
+    [self leftValueChange:self.leftButton.centerX];
+    [self rightValueChange:self.rightButton.centerX];
 }
 //MARK: - 滑块值的改变以及响应
 -(void)leftValueChange:(CGFloat)maxX{
